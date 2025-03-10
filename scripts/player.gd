@@ -1,6 +1,6 @@
 extends RigidBody2D
 
-var mouse_control = true
+var mouse_control = false
 var direction_mult = { # Define Directional Multipliers
 	"forward": 1.0,
 	"lateral": 0.7,
@@ -8,13 +8,9 @@ var direction_mult = { # Define Directional Multipliers
 }
 var linear_thrust = 300 # Overall thrust multiplier
 var angular_thrust = 5000 # Overall yaw thrust multiplier
+var thrustparticles; # Booster particles
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
+func process_movement() -> void:
 	# Initialize zero force vector
 	var precalc_force = Vector2(0, 0)
 	
@@ -41,17 +37,11 @@ func _process(delta: float) -> void:
 	
 	# Handle yaw forces
 	if mouse_control: # Implement PID LOOP?
-		var angle_to_mouse = position.angle_to_point(get_viewport().get_mouse_position())
+		var mouse_direction = (get_global_mouse_position() - global_position).normalized()
+		var angle_to_mouse = Vector2().from_angle(rotation).angle_to(mouse_direction)
 		
-		var diff = rotation - angle_to_mouse
-		
-		if diff > 0 :
-			constant_torque = -angular_thrust
-		elif diff < 0 :
-			constant_torque = angular_thrust
-		else:
-			constant_torque = 0
-		
+		constant_torque = angle_to_mouse / PI * angular_thrust
+	
 	else:
 		if Input.is_action_pressed("yaw_left"):
 			constant_torque = -angular_thrust
@@ -59,3 +49,16 @@ func _process(delta: float) -> void:
 			constant_torque = angular_thrust
 		else:
 			constant_torque = 0
+
+func process_emitters() -> void:
+	thrustparticles.amount_ratio = Input.get_action_strength("move_forward")
+	
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	thrustparticles = get_node("thrustParticles")
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	process_movement()
+	process_emitters()

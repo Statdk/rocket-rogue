@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=3 uid="uid://ylt5yl4stp62"]
+
+[ext_resource type="Texture2D" uid="uid://cugnpl60uipi6" path="res://icon.svg" id="1_4flbx"]
+[ext_resource type="Script" uid="uid://dsr4o08wl8se1" path="res://scripts/player.gd" id="1_onrkg"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_onrkg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_onrkg"]
+size = Vector2(52, 52)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_g2els"]
+lifetime_randomness = 0.2
+particle_flag_disable_z = true
+angle_min = 80.0
+angle_max = 100.0
+inherit_velocity_ratio = 1.0
+direction = Vector3(-1, 0, 0)
+spread = 21.706
+initial_velocity_min = 74.63
+initial_velocity_max = 134.33
+gravity = Vector3(0, 0, 0)
+scale_min = 0.0
+scale_max = 0.1
+
+[node name="RigidBody2D" type="RigidBody2D"]
+physics_material_override = SubResource("PhysicsMaterial_onrkg")
+can_sleep = false
+script = ExtResource("1_onrkg")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 9.53674e-07)
+shape = SubResource("RectangleShape2D_onrkg")
+
+[node name="thrustParticles" type="GPUParticles2D" parent="."]
+position = Vector2(-26, 0)
+emitting = false
+amount = 3000
+texture = ExtResource("1_4flbx")
+process_material = SubResource("ParticleProcessMaterial_g2els")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.405, 0.405)
+texture = ExtResource("1_4flbx")
