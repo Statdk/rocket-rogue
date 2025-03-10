@@ -1,12 +1,13 @@
 extends RigidBody2D
 
+var mouse_control = true
 var direction_mult = { # Define Directional Multipliers
 	"forward": 1.0,
 	"lateral": 0.7,
 	"backward": 0.5
 }
 var linear_thrust = 300 # Overall thrust multiplier
-var angular_thrust = 10000 # Overall yaw thrust multiplier
+var angular_thrust = 5000 # Overall yaw thrust multiplier
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -39,9 +40,22 @@ func _process(delta: float) -> void:
 		sin(rotation) * precalc_force.y
 	
 	# Handle yaw forces
-	if Input.is_action_pressed("yaw_left"):
-		constant_torque = -angular_thrust
-	elif Input.is_action_pressed("yaw_right"):
-		constant_torque = angular_thrust
+	if mouse_control:
+		var angle_to_mouse = position.angle_to_point(get_viewport().get_mouse_position())
+		
+		var diff = rotation - angle_to_mouse
+		
+		if diff > 0 :
+			constant_torque = -angular_thrust
+		elif diff < 0 :
+			constant_torque = angular_thrust
+		else:
+			constant_torque = 0
+		
 	else:
-		constant_torque = 0
+		if Input.is_action_pressed("yaw_left"):
+			constant_torque = -angular_thrust
+		elif Input.is_action_pressed("yaw_right"):
+			constant_torque = angular_thrust
+		else:
+			constant_torque = 0
