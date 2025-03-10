@@ -20,13 +20,13 @@ func _process(delta: float) -> void:
 	
 	# Calculate 0-1 force mult for each input
 	if Input.is_action_pressed("move_forward"):
-		precalc_force.y -= direction_mult["forward"] * Input.get_action_strength("move_forward")
+		precalc_force.x += direction_mult["forward"] * Input.get_action_strength("move_forward")
 	if Input.is_action_pressed("move_backward"):
-		precalc_force.y += direction_mult["backward"] * Input.get_action_strength("move_backward")
+		precalc_force.x -= direction_mult["backward"] * Input.get_action_strength("move_backward")
 	if Input.is_action_pressed("move_left"):
-		precalc_force.x -= direction_mult["lateral"] * Input.get_action_strength("move_left")
+		precalc_force.y -= direction_mult["lateral"] * Input.get_action_strength("move_left")
 	if Input.is_action_pressed("move_right"):
-		precalc_force.x += direction_mult["lateral"] * Input.get_action_strength("move_right")
+		precalc_force.y += direction_mult["lateral"] * Input.get_action_strength("move_right")
 	
 	# Apply overall mult
 	precalc_force *= linear_thrust
@@ -40,7 +40,7 @@ func _process(delta: float) -> void:
 		sin(rotation) * precalc_force.y
 	
 	# Handle yaw forces
-	if mouse_control:
+	if mouse_control: # Implement PID LOOP?
 		var angle_to_mouse = position.angle_to_point(get_viewport().get_mouse_position())
 		
 		var diff = rotation - angle_to_mouse
